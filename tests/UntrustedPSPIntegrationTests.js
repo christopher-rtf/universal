@@ -70,6 +70,12 @@ fluid.defaults("gpii.tests.untrusted.pspIntegration.testCaseHolder", {
     gradeNames: [
         "gpii.tests.pspIntegration.testCaseHolder.common.linux"
     ],
+    distributeOptions: {
+        "acceptance.defaultSettings": {
+            record: "{that}.options.defaultSettings",
+            target: "{that gpii.flowManager.local}.options.defaultSettings"
+        }
+    },
     components: {
         rawPrefsAtStart: {
             type: "gpii.test.untrusted.pspIntegration.rawPrefsRequest"
@@ -109,7 +115,7 @@ gpii.test.untrusted.pspIntegration.expectedPrefsChange = [
                     "name": "Default preferences",
                     "preferences": {
                         "http://registry.gpii.net/applications/org.gnome.desktop.a11y.magnifier": {
-                            "mag-factor": 3
+                            "http://registry.gpii.net/common/magnification": 3
                         }
                     }
                 }
@@ -140,7 +146,7 @@ gpii.test.untrusted.pspIntegration.expectedPrefsChange = [
                         "http://registry.gpii.net/common/magnification": 1.5,
                         "http://registry.gpii.net/common/volume": 0.5,
                         "http://registry.gpii.net/applications/org.gnome.desktop.a11y.magnifier": {
-                            "mag-factor": 3
+                            "http://registry.gpii.net/common/magnification": 3
                         }
                     }
                 }
@@ -151,6 +157,19 @@ gpii.test.untrusted.pspIntegration.expectedPrefsChange = [
     {
     },
     // 6
+    {
+        "flat": {
+            "contexts": {
+                "gpii-default": {
+                    "name": "Default preferences",
+                    "preferences": {
+                        "http://registry.gpii.net/common/magnification": 3
+                    }
+                }
+            }
+        }
+    },
+    // 7
     {
         "flat": {
             "contexts": {
@@ -195,7 +214,6 @@ gpii.test.untrusted.pspIntegration.verifyRawPrefsAtStart = function (that, prefe
 };
 
 gpii.test.untrusted.pspIntegration.verifyRawPrefsAtEnd = function (that, preferences, sequenceNum, expectedChange) {
-    fluid.log (that.options.name, ", number ", sequenceNum, " in the sequence");
     var expectedPrefsChange = expectedChange ? expectedChange : gpii.test.untrusted.pspIntegration.expectedPrefsChange[sequenceNum];
 
     var expected = fluid.extend(true, {}, that.options.initialPrefs, expectedPrefsChange);
@@ -248,7 +266,7 @@ gpii.tests.pspIntegration.saveTestDefs = [
                 args: ["{arguments}.0", "modelChanged"]
             }, {
                 funcName: "gpii.tests.pspIntegration.sendMsg",
-                args: [ "{pspClient}", [ "preferences","http://registry\\.gpii\\.net/common/pitch"], 0.8]
+                args: [ "{pspClient}", [ "preferences","http://registry\\.gpii\\.net/common/pitch"], 0.85]
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
@@ -287,7 +305,7 @@ gpii.tests.pspIntegration.saveTestDefs = [
                             "gpii-default": {
                                 "name": "Default preferences",
                                 "preferences": {
-                                    "http://registry.gpii.net/common/pitch": 0.8
+                                    "http://registry.gpii.net/common/pitch": 0.85
                                 }
                             }
                         }
