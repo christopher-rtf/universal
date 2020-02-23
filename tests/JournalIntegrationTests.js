@@ -1,5 +1,5 @@
 /**
-GPII Journal Integration Tests
+GPII Context Integration Tests
 
 Copyright 2016 Raising the Floor - International
 

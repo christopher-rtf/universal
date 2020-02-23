@@ -33,10 +33,15 @@ gpii.tests.pspIntegration.buildTestDefs = function (testDefs) {
             },
             distributeOptions: {
                 "acceptance.defaultSettings": {
+<<<<<<< HEAD
                     "record": {
                         args: testDef.defaultSettings
                     },
                     "target": "{that defaultSettingsLoader}.options.invokers.get"
+=======
+                    record: "{that}.options.defaultSettings",
+                    target: "{that gpii.flowManager.local}.options.defaultSettings"
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
                 }
             }
         }, testDef);

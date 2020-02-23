@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "com.freedomscientific.jaws": {
         "name": "JAWS",
         "contexts": {
@@ -16178,6 +16179,10 @@
     },
     "com.microsoft.office": {
         "name": "Microsoft Office",
+=======
+    "com.microsoft.windows.volumeControl": {
+        "name": "Windows 10 system volume",
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
         "contexts": {
             "OS": [
                 {
@@ -16187,153 +16192,46 @@
             ]
         },
         "settingsHandlers": {
-            "configure.common-tabletmode":  {
-                "type": "gpii.windows.registrySettingsHandler",
-                "liveness": "liveRestart",
-                "options": {
-                    "hKey": "HKEY_CURRENT_USER",
-                    "path": "Software\\Microsoft\\Office\\16.0\\Common",
-                    "dataTypes": {
-                        "OverrideTabletMode": "REG_DWORD",
-                        "OverridePointerMode": "REG_DWORD"
-                    }
-                },
-                "capabilitiesTransformations": {
-                    "OverrideTabletMode": {
-                        "transform": {
-                            "type": "fluid.transforms.condition",
-                            "conditionPath": "http://registry\\.gpii\\.net/applications/com\\.microsoft\\.office.tabletMode",
-                            "true": 1,
-                            "false": 0
-                        }
-                    },
-                    "OverridePointerMode": {
-                        "transform": {
-                            "type": "fluid.transforms.condition",
-                            "conditionPath": "http://registry\\.gpii\\.net/applications/com\\.microsoft\\.office.tabletMode",
-                            "true": 2,
-                            "false": 1
-                        }
-                    }
-                },
-                "supportedSettings": {
-                    "OverrideTabletMode": {
-                        "schema": {
-                            "title": "Enable Tablet Mode",
-                            "description": "Display larger ribbon buttons that are easier to touch",
-                            "type": "number",
-                            "enum": [
-                                1,
-                                2
-                            ],
-                            "enumLabels": [
-                                "off",
-                                "on"
-                            ],
-                            "default": 1
-                        }
-                    },
-                    "OverridePointerMode": {
-                        "schema": {
-                            "title": "Enable Tablet Mode",
-                            "description": "Display larger ribbon buttons that are easier to touch",
-                            "type": "number",
-                            "enum": [
-                                1,
-                                2
-                            ],
-                            "enumLabels": [
-                                "off",
-                                "on"
-                            ],
-                            "default": 1
-                        }
-                    }
-                }
-            },
-            "configure.ribbons": {
-                "type": "gpii.settingsHandlers.remoteFileSettingsHandler",
+            "configure": {
+                "type": "gpii.windows.nativeSettingsHandler",
                 "liveness": "live",
                 "options": {
-                    "settings": {
-                        "word-ribbon": {
-                            "path": "${{environment}.LOCALAPPDATA}\\Microsoft\\Office\\Word.officeUI",
-                            "url": "https://raw.githubusercontent.com/GPII/gpii-assets/master/dataBlocks/officeRibbon/Word%20%value.xml",
-                            "cache": true
-                        },
-                        "excel-ribbon": {
-                            "path": "${{environment}.LOCALAPPDATA}\\Microsoft\\Office\\Excel.officeUI",
-                            "url": "https://raw.githubusercontent.com/GPII/gpii-assets/master/dataBlocks/officeRibbon/Excel%20%value.xml",
-                            "cache": true
+                    "functionName": "Volume"
+                },
+                "supportedSettings": {
+                    "Volume": {
+                        "schema": {
+                            "title": "System volume",
+                            "description": "Changes the current system volume.",
+                            "type": "number",
+                            "default": 0.5,
+                            "minimum": 0,
+                            "maximum": 1,
+                            "multipleOf": 0.01
                         }
                     }
                 },
                 "capabilitiesTransformations": {
-                    "word-ribbon": "http://registry\\.gpii\\.net/applications/com\\.microsoft\\.office.word-ribbon",
-                    "excel-ribbon": "http://registry\\.gpii\\.net/applications/com\\.microsoft\\.office.excel-ribbon"
-                },
-                "supportedSettings": {
-                    "word-ribbon": {
-                        "schema": {
-                            "title": "Word Ribbon Layout",
-                            "description": "Specifies the custom layout of the ribbon and quick access toolbar for Word",
-                            "enum": [
-                                "StandardSet",
-                                "Basics+StandardSet",
-                                "Essentials+StandardSet",
-                                "Basics+Essentials+StandardSet"
-                            ],
-                            "enumLabels": [
-                                "Standard Set",
-                                "Basics and Standard Set",
-                                "Essentials and Standard Set",
-                                "Basic, Essentials, and Standard Set"
-                            ],
-                            "default": "StandardSet"
-                        }
-                    },
-                    "excel-ribbon": {
-                        "schema": {
-                            "title": "Excel Ribbon Layout",
-                            "description": "Specifies the custom layout of the ribbon and quick access toolbar for Excel",
-                            "enum": [
-                                "StandardSet",
-                                "Basics+StandardSet",
-                                "Essentials+StandardSet",
-                                "Basics+Essentials+StandardSet"
-                            ],
-                            "enumLabels": [
-                                "Standard Set",
-                                "Basics and Standard Set",
-                                "Essentials and Standard Set",
-                                "Basic, Essentials, and Standard Set"
-                            ],
-                            "default": "StandardSet"
+                    "Volume": {
+                        "transform": {
+                            "type": "fluid.transforms.value",
+                            "inputPath": "http://registry\\.gpii\\.net/common/volume",
+                            "outputPath": "value"
                         }
                     }
+                },
+                "inverseCapabilitiesTransformations": {
+                    "http://registry\\.gpii\\.net/common/volume": "Volume.value"
                 }
             }
         },
-        "configure": [
-            "settings.configure.ribbons",
-            "settings.configure.common-tabletmode",
-            {
-                type: "gpii.windows.office.reloadRibbon",
-                application: "Word"
-            }
-        ],
-        "restore": [
-            "settings.configure.ribbons",
-            "settings.configure.common-tabletmode",
-            {
-                type: "gpii.windows.office.reloadRibbon",
-                application: "Word"
-            }
-        ],
+        "start": [],
+        "stop": [],
         "isInstalled": [
             {
                 "type": "gpii.deviceReporter.alwaysInstalled"
             }
-        ]
+        ],
+        "isRunning": []
     }
 }

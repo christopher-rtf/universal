@@ -21,12 +21,201 @@ fluid.registerNamespace("gpii.tests.pspIntegration");
 fluid.require("%gpii-universal");
 gpii.loadTestingSupport();
 
+<<<<<<< HEAD
 require("./PSPIntegrationTestUtils.js");
 
 gpii.tests.pspIntegration.applyPrefsTestDefs = [
     {
         name: "Simple settings change by PSP - change an existing user setting",
         expect: 9,
+=======
+fluid.defaults("gpii.tests.pspIntegration.environmentChangedRequestType", {
+    gradeNames: "kettle.test.request.http",
+    path: "/environmentChanged",
+    method: "PUT"
+});
+
+fluid.defaults("gpii.tests.pspIntegration.client", {
+    gradeNames: "kettle.test.request.ws",
+    path: "/pspChannel",
+    port: 8081
+});
+
+fluid.defaults("gpii.tests.pspIntegration.resetRequestType", {
+    gradeNames: "kettle.test.request.http",
+    path: "/user/reset/login"
+});
+
+gpii.tests.pspIntegration.sendMsg = function (client, path, value) {
+    client.send({
+        path: path,
+        value: value,
+        type: "ADD"
+    });
+};
+
+gpii.tests.pspIntegration.sendContextChange = function (client, newContext) {
+    gpii.tests.pspIntegration.sendMsg(client, ["activeContextName"], newContext);
+};
+
+gpii.tests.pspIntegration.checkPayload = function (data, expectedType, expectedSettingControls) {
+    jqUnit.assertEquals("Checking message from PSP: ", expectedType, data.type);
+    if (expectedSettingControls) {
+        var actualSettingControls = data.payload.value.settingControls;
+        jqUnit.assertDeepEq("Checking received settingControls from PSP: ", expectedSettingControls, actualSettingControls);
+    }
+};
+
+gpii.tests.pspIntegration.connectionSucceeded = function (data) {
+    jqUnit.assertValue("Connection between client and server can be established", data);
+};
+
+gpii.tests.pspIntegration.checkResetResponse = function (data) {
+    jqUnit.assertEquals("The reset request completes successfully", "Reset successfully.", data);
+};
+
+gpii.tests.pspIntegration.data = {
+    initial: {
+        "settingsHandlers": {
+            "gpii.gsettings": {
+                "data": [{
+                    "settings": {
+                        "mag-factor": 1.5
+                    },
+                    "options": {
+                        "schema": "org.gnome.desktop.a11y.magnifier"
+                    }
+                }]
+            },
+            "gpii.alsa": {
+                "data": [{
+                    "settings": {
+                        "masterVolume": 50
+                    }
+                }]
+            }
+        }
+    },
+    afterChangeMagnification: {
+        "settingsHandlers": {
+            "gpii.gsettings": {
+                "data": [{
+                    "settings": {
+                        "mag-factor": 3
+                    },
+                    "options": {
+                        "schema": "org.gnome.desktop.a11y.magnifier"
+                    }
+                }]
+            },
+            "gpii.alsa": {
+                "data": [{
+                    "settings": {
+                        "masterVolume": 50
+                    }
+                }]
+            }
+        }
+    },
+    afterChangeCursorSize: {
+        "settingsHandlers": {
+            "gpii.gsettings": {
+                "data": [{
+                    "settings": {
+                        "cursor-size": 41
+                    },
+                    "options": {
+                        "schema": "org.gnome.desktop.interface"
+                    }
+                }]
+            },
+            "gpii.alsa": {
+                "data": [{
+                    "settings": {
+                        "masterVolume": 50
+                    }
+                }]
+            }
+        }
+    },
+    afterDecreaseCursorSize: {
+        "settingsHandlers": {
+            "gpii.gsettings": {
+                "data": [{
+                    "settings": {
+                        "cursor-size": 29
+                    },
+                    "options": {
+                        "schema": "org.gnome.desktop.interface"
+                    }
+                }]
+            },
+            "gpii.alsa": {
+                "data": [{
+                    "settings": {
+                        "masterVolume": 50
+                    }
+                }]
+            }
+        }
+    },
+    afterChangeVolume: {
+        "settingsHandlers": {
+            "gpii.gsettings": {
+                "data": [{
+                    "settings": {
+                        "mag-factor": 3
+                    },
+                    "options": {
+                        "schema": "org.gnome.desktop.a11y.magnifier"
+                    }
+                }]
+            },
+            "gpii.alsa": {
+                "data": [{
+                    "settings": {
+                        "masterVolume": 75
+                    }
+                }]
+            }
+        }
+    },
+    afterChangeShowCrosshairs: {
+        "settingsHandlers": {
+            "gpii.gsettings": {
+                "data": [{
+                    "settings": {
+                        "mag-factor": 3,
+                        "show-cross-hairs": 1
+                    },
+                    "options": {
+                        "schema": "org.gnome.desktop.a11y.magnifier"
+                    }
+                }]
+            }
+        }
+    },
+    bright: {
+        "settingsHandlers": {
+            "gpii.gsettings": {
+                "data": [{
+                    "settings": {
+                        "mag-factor": 2
+                    },
+                    "options": {
+                        "schema": "org.gnome.desktop.a11y.magnifier"
+                    }
+                }]
+            }
+        }
+    }
+};
+
+gpii.tests.pspIntegration.testDefs = [
+    {
+        name: "Simple settings change by PSP - change an existing user setting",
+        expect: 8,
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
         sequence: [
             {
                 func: "gpii.test.expandSettings",
@@ -56,7 +245,11 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
+<<<<<<< HEAD
                 args: ["{arguments}.0", "modelChanged", gpii.tests.pspIntegration.expectedSettingControls.afterConnect]
+=======
+                args: ["{arguments}.0", "modelChanged"]
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
             }, {
                 funcName: "gpii.tests.pspIntegration.sendMsg",
                 args: [ "{pspClient}", "modelChanged", {
@@ -121,7 +314,11 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
+<<<<<<< HEAD
                 args: ["{arguments}.0", "modelChanged", gpii.tests.pspIntegration.expectedSettingControls.afterConnect]
+=======
+                args: ["{arguments}.0", "modelChanged"]
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
             }, {
                 funcName: "gpii.tests.pspIntegration.sendMsg",
                 args: [ "{pspClient}", "modelChanged", {
@@ -209,6 +406,7 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
+<<<<<<< HEAD
                 args: ["{arguments}.0", "modelChanged", gpii.tests.pspIntegration.expectedSettingControls.afterConnect]
             }, {
                 funcName: "gpii.tests.pspIntegration.sendMsg",
@@ -223,6 +421,16 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
                 args: ["{arguments}.0", "modelChanged", gpii.tests.pspIntegration.expectedSettingControls.afterChangeMagnificationByAppTerm]
+=======
+                args: ["{arguments}.0", "modelChanged"]
+            }, {
+                funcName: "gpii.tests.pspIntegration.sendMsg",
+                args: [ "{pspClient}", [ "preferences","http://registry\\.gpii\\.net/applications/org\\.gnome\\.desktop\\.a11y\\.magnifier.http://registry\\.gpii\\.net/common/magnification"], 3]
+            }, {
+                event: "{pspClient}.events.onReceiveMessage",
+                listener: "gpii.tests.pspIntegration.checkPayload",
+                args: ["{arguments}.0", "modelChanged"]
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
@@ -365,6 +573,7 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
                 args: ["{arguments}.0", "modelChanged", gpii.tests.pspIntegration.expectedSettingControls.afterConnect]
             }, {
                 funcName: "gpii.tests.pspIntegration.sendMsg",
+<<<<<<< HEAD
                 args: [ "{pspClient}", "modelChanged", {
                     settingControls: {
                         "http://registry\\.gpii\\.net/applications/org\\.gnome\\.desktop\\.a11y\\.magnifier.mag-factor": {
@@ -372,6 +581,9 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
                         }
                     }
                 }]
+=======
+                args: ["{pspClient}", [ "preferences","http://registry\\.gpii\\.net/applications/org\\.gnome\\.desktop\\.a11y\\.magnifier.http://registry\\.gpii\\.net/common/magnification"], 3]
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
@@ -388,6 +600,7 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
                 listener: "fluid.identity"
             }, {
                 funcName: "gpii.tests.pspIntegration.sendMsg",
+<<<<<<< HEAD
                 args: [ "{pspClient}", "modelChanged", {
                     settingControls: {
                         "http://registry\\.gpii\\.net/applications/org\\.gnome\\.desktop\\.a11y\\.magnifier.show-cross-hairs": {
@@ -395,6 +608,9 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
                         }
                     }
                 }]
+=======
+                args: ["{pspClient}", [ "preferences","http://registry\\.gpii\\.net/applications/org\\.gnome\\.desktop\\.a11y\\.magnifier.http://registry\\.gpii\\.net/common/showCrosshairs"], 1]
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
@@ -423,7 +639,66 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
             }
         ]
     }, {
-        name: "Preferences set change via the PSP",
+        name: "Context change via the PSP",
+        expect: 8,
+        sequence: [
+            {
+                func: "gpii.test.expandSettings",
+                args: [ "{tests}", [ "contexts" ]]
+            }, {
+                func: "gpii.test.snapshotSettings",
+                args: ["{tests}.options.data.initial.settingsHandlers", "{tests}.settingsStore", "{nameResolver}", "{testCaseHolder}.events.onSnapshotComplete.fire"]
+            }, {
+                event: "{testCaseHolder}.events.onSnapshotComplete",
+                listener: "fluid.identity"
+            }, {
+                func: "{loginRequest}.send"
+            }, {
+                event: "{loginRequest}.events.onComplete",
+                listener: "gpii.test.loginRequestListen"
+            }, {
+                func: "gpii.test.checkConfiguration",
+                args: ["{tests}.options.data.initial.settingsHandlers", "{nameResolver}", "{testCaseHolder}.events.onCheckConfigurationComplete.fire"]
+            }, {
+                event: "{testCaseHolder}.events.onCheckConfigurationComplete",
+                listener: "fluid.identity"
+            }, {
+                func: "{pspClient}.connect"
+            }, {
+                event: "{pspClient}.events.onConnect",
+                listener: "gpii.tests.pspIntegration.connectionSucceeded"
+            }, {
+                event: "{pspClient}.events.onReceiveMessage",
+                listener: "gpii.tests.pspIntegration.checkPayload",
+                args: ["{arguments}.0", "modelChanged"]
+            }, {
+                funcName: "gpii.tests.pspIntegration.sendContextChange",
+                args: ["{pspClient}", "bright"]
+            }, {
+                event: "{pspClient}.events.onReceiveMessage",
+                listener: "gpii.tests.pspIntegration.checkPayload",
+                args: ["{arguments}.0", "modelChanged"]
+            }, {
+                func: "gpii.test.checkConfiguration",
+                args: ["{tests}.options.data.bright.settingsHandlers", "{nameResolver}", "{testCaseHolder}.events.onCheckConfigurationComplete.fire"]
+            }, {
+                event: "{testCaseHolder}.events.onCheckConfigurationComplete",
+                listener: "fluid.identity"
+            }, {
+                func: "{logoutRequest}.send"
+            }, {
+                event: "{logoutRequest}.events.onComplete",
+                listener: "gpii.test.logoutRequestListen"
+            }, {
+                func: "gpii.test.checkRestoredConfiguration",
+                args: ["{tests}.options.data.initial.settingsHandlers", "{tests}.settingsStore", "{nameResolver}", "{testCaseHolder}.events.onCheckRestoredConfigurationComplete.fire"]
+            }, {
+                event: "{testCaseHolder}.events.onCheckRestoredConfigurationComplete",
+                listener: "fluid.identity"
+            }
+        ]
+    }, {
+        name: "Settings change from PSP followed by context change via the PSP (new context should be applied)",
         expect: 10,
         sequence: [
             {
@@ -454,14 +729,35 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
+<<<<<<< HEAD
                 args: ["{arguments}.0", "modelChanged", gpii.tests.pspIntegration.expectedSettingControls.afterConnect]
+=======
+                args: ["{arguments}.0", "modelChanged"]
             }, {
-                funcName: "gpii.tests.pspIntegration.sendPrefsSetNameChange",
+                funcName: "gpii.tests.pspIntegration.sendMsg",
+                args: ["{pspClient}", [ "preferences","http://registry\\.gpii\\.net/common/magnification"], 3]
+            }, {
+                event: "{pspClient}.events.onReceiveMessage",
+                listener: "gpii.tests.pspIntegration.checkPayload",
+                args: ["{arguments}.0", "preferencesApplied"]
+            }, {
+                func: "gpii.test.checkConfiguration",
+                args: ["{tests}.options.data.afterChangeMagnification.settingsHandlers", "{nameResolver}", "{testCaseHolder}.events.onCheckConfigurationComplete.fire"]
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
+            }, {
+                event: "{testCaseHolder}.events.onCheckConfigurationComplete",
+                listener: "fluid.identity"
+            }, {
+                funcName: "gpii.tests.pspIntegration.sendContextChange",
                 args: ["{pspClient}", "bright"]
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
+<<<<<<< HEAD
                 args: ["{arguments}.0", "modelChanged", gpii.tests.pspIntegration.expectedSettingControls.afterChangeToBright]
+=======
+                args: ["{arguments}.0", "modelChanged"]
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
             }, {
                 func: "gpii.test.checkConfiguration",
                 args: [gpii.tests.pspIntegration.settingsHandlers.bright, "{nameResolver}", "{testCaseHolder}.events.onCheckConfigurationComplete.fire"]
@@ -482,8 +778,15 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
             }
         ]
     }, {
+<<<<<<< HEAD
         name: "Settings change from PSP followed by a preferences set change via the PSP",
         expect: 12,
+=======
+        // This test checks that the manually changed context from the user is not overridden
+        // by a context change triggered by changes in the environment
+        name: "Manual context change via the PSP followed by a change in environment",
+        expect: 11,
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
         sequence: [
             {
                 func: "gpii.test.expandSettings",
@@ -513,7 +816,11 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
+<<<<<<< HEAD
                 args: ["{arguments}.0", "modelChanged", gpii.tests.pspIntegration.expectedSettingControls.afterConnect]
+=======
+                args: ["{arguments}.0", "modelChanged"]
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
             }, {
                 funcName: "gpii.tests.pspIntegration.sendMsg",
                 args: [ "{pspClient}", "modelChanged", {
@@ -534,15 +841,30 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
                 event: "{testCaseHolder}.events.onCheckConfigurationComplete",
                 listener: "fluid.identity"
             }, {
-                funcName: "gpii.tests.pspIntegration.sendPrefsSetNameChange",
+                funcName: "gpii.tests.pspIntegration.sendContextChange",
                 args: ["{pspClient}", "bright"]
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
+<<<<<<< HEAD
                 args: ["{arguments}.0", "modelChanged", gpii.tests.pspIntegration.expectedSettingControls.afterChangeToBright]
+=======
+                args: ["{arguments}.0", "modelChanged"]
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
             }, {
                 func: "gpii.test.checkConfiguration",
                 args: [gpii.tests.pspIntegration.settingsHandlers.bright, "{nameResolver}", "{testCaseHolder}.events.onCheckConfigurationComplete.fire"]
+            }, {
+                event: "{testCaseHolder}.events.onCheckConfigurationComplete",
+                listener: "fluid.identity"
+            }, {
+                func: "{environmentChangedRequest}.send", // change the environment to match "noise context"
+                args: { "http://registry.gpii.net/common/environment/auditory.noise": 30000 }
+            }, {
+                event: "{environmentChangedRequest}.events.onComplete"
+            }, {
+                func: "gpii.test.checkConfiguration", // should still be bright since manual overrides automatic context
+                args: ["{tests}.options.data.bright.settingsHandlers", "{nameResolver}", "{testCaseHolder}.events.onCheckConfigurationComplete.fire"]
             }, {
                 event: "{testCaseHolder}.events.onCheckConfigurationComplete",
                 listener: "fluid.identity"
@@ -595,6 +917,7 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
             }, {
                 // Issue a setting change that will be applied using the async mock settings handler
                 funcName: "gpii.tests.pspIntegration.sendMsg",
+<<<<<<< HEAD
                 args: [ "{pspClient}", "modelChanged", {
                     settingControls: {
                         "http://registry\\.gpii\\.net/applications/org\\.gnome\\.orca.enableSpeech": {
@@ -602,6 +925,9 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
                         }
                     }
                 }]
+=======
+                args: [ "{pspClient}", [ "preferences","http://registry\\.gpii\\.net/applications/org\\.gnome\\.orca.http://registry\\.gpii\\.net/common/screenReaderTTS/enabled"], true]
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
             }, {
                 event: "{pspClient}.events.onReceiveMessage",
                 listener: "gpii.tests.pspIntegration.checkPayload",
@@ -621,6 +947,41 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
     }, {
         name: "GPII-3693: \"reset all\" does not corrupt PSPChannel's model",
         expect: 10,
+<<<<<<< HEAD
+=======
+        expectedSettingControls: {
+            noUser: {},
+            afterChangeMagnification: {
+                "http://registry\\.gpii\\.net/common/magnification": {
+                    "value": 3,
+                    "schema": {
+                        "title": "Magnification",
+                        "description": "Level of magnification",
+                        "type": "number",
+                        "default": 1,
+                        "minimum": 1,
+                        "multipleOf": 0.1
+                    },
+                    "liveness": "live"
+                }
+            },
+            afterChangeCursorSize: {
+                "http://registry\\.gpii\\.net/common/cursorSize": {
+                    "value": 0.9,
+                    "schema": {
+                        "title": "Cursor Size",
+                        "description": "Cursor size",
+                        "type": "number",
+                        "default": 0.5,
+                        "minimum": 0,
+                        "maximum": 1,
+                        "multipleOf": 0.1
+                    },
+                    "liveness": "live"
+                }
+            }
+        },
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
         sequence: [
             {
                 func: "{pspClient}.connect"
@@ -755,9 +1116,161 @@ gpii.tests.pspIntegration.applyPrefsTestDefs = [
                 args: ["{arguments}.0", "modelChanged", gpii.tests.pspIntegration.expectedSettingControls.afterChangeCursorSizeWitthDefaultSettings]
             }
         ]
+    }, {
+        name: "GPII-3828: PSPChannel reports default settings from the reset to default file when settingControls block is empty",
+        expect: 10,
+        "defaultSettings": {
+            "contexts": {
+                "gpii-default": {
+                    "preferences": {
+                        "http://registry.gpii.net/common/cursorSize": 0.8,
+                        "http://registry.gpii.net/common/volume": 1
+                    }
+                }
+            }
+        },
+        expectedSettingControls: {
+            noUser: {
+                "http://registry\\.gpii\\.net/common/cursorSize": {
+                    "schema": {
+                        "title": "Cursor Size",
+                        "description": "Cursor size",
+                        "type": "number",
+                        "default": 0.8,
+                        "minimum": 0,
+                        "maximum": 1,
+                        "multipleOf": 0.1
+                    },
+                    "liveness": "live"
+                },
+                "http://registry\\.gpii\\.net/common/volume": {
+                    "schema": {
+                        "title": "Volume",
+                        "description": "General volume of the operating system",
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "default": 1
+                    },
+                    "liveness": "live"
+                }
+            },
+            afterChangeMagnification: {
+                "http://registry\\.gpii\\.net/common/cursorSize": {
+                    "schema": {
+                        "title": "Cursor Size",
+                        "description": "Cursor size",
+                        "type": "number",
+                        "default": 0.8,
+                        "minimum": 0,
+                        "maximum": 1,
+                        "multipleOf": 0.1
+                    },
+                    "liveness": "live"
+                },
+                "http://registry\\.gpii\\.net/common/volume": {
+                    "schema": {
+                        "title": "Volume",
+                        "description": "General volume of the operating system",
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "default": 1
+                    },
+                    "liveness": "live"
+                },
+                "http://registry\\.gpii\\.net/common/magnification": {
+                    "value": 3,
+                    "schema": {
+                        "title": "Magnification",
+                        "description": "Level of magnification",
+                        "type": "number",
+                        "default": 1,
+                        "minimum": 1,
+                        "multipleOf": 0.1
+                    },
+                    "liveness": "live"
+                }
+            },
+            afterChangeCursorSize: {
+                "http://registry\\.gpii\\.net/common/cursorSize": {
+                    "value": 0.9,
+                    "schema": {
+                        "title": "Cursor Size",
+                        "description": "Cursor size",
+                        "type": "number",
+                        "default": 0.8,
+                        "minimum": 0,
+                        "maximum": 1,
+                        "multipleOf": 0.1
+                    },
+                    "liveness": "live"
+                },
+                "http://registry\\.gpii\\.net/common/volume": {
+                    "schema": {
+                        "title": "Volume",
+                        "description": "General volume of the operating system",
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1,
+                        "default": 1
+                    },
+                    "liveness": "live"
+                }
+            }
+        },
+        sequence: [
+            {
+                func: "{pspClient}.connect"
+            },
+            {
+                event: "{pspClient}.events.onConnect",
+                listener: "gpii.tests.pspIntegration.connectionSucceeded"
+            },
+            {
+                event: "{pspClient}.events.onReceiveMessage",
+                listener: "gpii.tests.pspIntegration.checkPayload",
+                args: ["{arguments}.0", "modelChanged", "{that}.options.expectedSettingControls.noUser"]
+            },
+            {
+                funcName: "gpii.tests.pspIntegration.sendMsg",
+                args: [ "{pspClient}", ["preferences", "http://registry\\.gpii\\.net/common/magnification"], 3]
+            },
+            {
+                event: "{pspClient}.events.onReceiveMessage",
+                listener: "gpii.tests.pspIntegration.checkPayload",
+                args: ["{arguments}.0", "modelChanged", "{that}.options.expectedSettingControls.afterChangeMagnification"]
+            },
+            {
+                func: "{resetRequest}.send"
+            },
+            {
+                event: "{resetRequest}.events.onComplete",
+                listener: "gpii.tests.pspIntegration.checkResetResponse",
+                args: ["{arguments}.0"]
+            },
+            {
+                // When "noUser" keys back in, PSP client receives empty settingControls block.
+                event: "{pspClient}.events.onReceiveMessage",
+                listener: "gpii.tests.pspIntegration.checkPayload",
+                args: ["{arguments}.0", "modelChanged", "{that}.options.expectedSettingControls.noUser"]
+            },
+            {
+                // change a setting that is in default settings from the reset to standard file.
+                // settingControls.settingKey.schema.default should be set to the value from the default setting.
+                funcName: "gpii.tests.pspIntegration.sendMsg",
+                args: [ "{pspClient}", ["preferences", "http://registry\\.gpii\\.net/common/cursorSize"], 0.9]
+            },
+            {
+                event: "{pspClient}.events.onReceiveMessage",
+                listener: "gpii.tests.pspIntegration.checkPayload",
+                args: ["{arguments}.0", "modelChanged", "{that}.options.expectedSettingControls.afterChangeCursorSize"]
+            }
+        ]
     }
 ];
 
+<<<<<<< HEAD
 gpii.tests.pspIntegration.readPrefsTestDefs = [
     {
         name: "Read the same setting sequentially",
@@ -908,6 +1421,22 @@ gpii.tests.pspIntegration.readPrefsTestDefs = [
                 args: ["{arguments}.0", "preferenceReadSuccess"]
             }
         ]
+=======
+fluid.defaults("gpii.tests.pspIntegration.testCaseHolder.common.linux", {
+    gradeNames: [
+        "gpii.test.integration.testCaseHolder.linux"
+    ],
+    components: {
+        pspClient: {
+            type: "gpii.tests.pspIntegration.client"
+        },
+        environmentChangedRequest: {
+            type: "gpii.tests.pspIntegration.environmentChangedRequestType"
+        },
+        resetRequest: {
+            type: "gpii.tests.pspIntegration.resetRequestType"
+        }
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
     },
     {
         name: "Read multiple settings in one request",

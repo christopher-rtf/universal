@@ -37,6 +37,10 @@ socket.on("message", function (data) {
         return;
     };
 
+<<<<<<< HEAD:examples/pspChannelClient/pspChannelClientApplyPrefs.js
+=======
+    // socket.send(JSON.stringify({"path": ["activeContextName"], "value": "bright", type: "ADD"}));
+>>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432:examples/pspChannelClient/pspChannelClient.js
     socket.send(JSON.stringify(
         {
             "type": "modelChanged",
