@@ -33,22 +33,12 @@ gpii.tests.pspIntegration.buildTestDefs = function (testDefs) {
             },
             distributeOptions: {
                 "acceptance.defaultSettings": {
-<<<<<<< HEAD
-                    "record": {
-                        args: testDef.defaultSettings
-                    },
-                    "target": "{that defaultSettingsLoader}.options.invokers.get"
-=======
                     record: "{that}.options.defaultSettings",
                     target: "{that gpii.flowManager.local}.options.defaultSettings"
->>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
                 }
             }
         }, testDef);
     });
 };
-var builtApplySettingsTestDefs = gpii.tests.pspIntegration.buildTestDefs(gpii.tests.pspIntegration.applyPrefsTestDefs);
-gpii.test.runCouchTestDefs(builtApplySettingsTestDefs);
-
-var builtReadSettingsTestDefs = gpii.tests.pspIntegration.buildTestDefs(gpii.tests.pspIntegration.readPrefsTestDefs);
-gpii.test.runCouchTestDefs(builtReadSettingsTestDefs);
+var builtTestDefs = gpii.tests.pspIntegration.buildTestDefs(gpii.tests.pspIntegration.testDefs);
+gpii.test.runCouchTestDefs(builtTestDefs);

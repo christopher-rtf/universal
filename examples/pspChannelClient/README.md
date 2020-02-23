@@ -5,7 +5,7 @@ This directory contains a tiny sample client for the pspChannel WebSockets conne
 ## Starting up the GPII and trying out the PSP channel example client.
 
 It can be tested by firing up any configuration of the GPII which includes a local FlowManager. Particularly
-suitable are the mock configurations in %gpii-universal/gpii/configs/mocks - for example you can run
+suitable are the mock configurations in %gpii-universal/gpii/configs/mocks - for example you can type
 
     `node gpii.js gpii/configs/mocks gpii.config.development.manualTesting.mock.windows`
 
@@ -43,13 +43,7 @@ Firstly, connecting the client when no user is keyed into the system produces th
     "type": "modelChanged",
     "payload": {
         "path": [],
-        "type": "ADD",
-        "value": {
-            "gpiiKey": "noUser",
-            "activePrefsSetName": "gpii-default",
-            "settingControls": {},
-            "preferences": {}
-        }
+        "type": "ADD"
     }
 }
 ```
@@ -131,36 +125,14 @@ setting.
 
 Changing the context via the psp is done with the following payload:
 
-<<<<<<< HEAD
-```json
-{
-    "type": "modelChanged",
-    "value": {
-        "activePrefsSetName": "bright"
-    }
-}
-```
-=======
 `{"path": ["activeContextName"], "value": "bright", type: "ADD"}`
->>>>>>> 1c8111cf28b8933f180f72b64b2d8bdef0094432
 
 This will change the context to "bright". To change the context to something else, simply change "bright" with the name
 of the desired context.
 
 The PSP API also supports changing preferences (one at a time). This is done via the following payload:
 
-```json
-{
-    "type": "modelChanged",
-    "value": {
-        "settingControls": {
-            "http://registry\\.gpii\\.net/common/magnification": {
-                "value": 4
-            }
-        }
-    }
-}
-```
+`{"path":["preferences","http://registry\\.gpii\\.net/common/magnification"],"type":"ADD","value":4}`
 
 Where the value for the "preferences" key is the setting that should change, and the value for the "value" is the new
 value the setting should take. So in the above example the common term magnification is set to 4.

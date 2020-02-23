@@ -1,4 +1,96 @@
 {
+    "com.apple.macos.language": {
+        "name": "macOS Display Language",
+        "contexts": {
+            "OS": [
+                {
+                    "id": "darwin"
+                }
+            ]
+        },
+        "settingsHandlers": {
+            "configure": {
+                "type": "gpii.macos.updateLanguage",
+                "liveness": "live",
+                "capabilities": [
+                    "http://registry\\.gpii\\.net/common/language"
+                ],
+                "capabilitiesTransformations": {
+                    "currentLanguage": {
+                        "transform": {
+                            "type": "fluid.transforms.value",
+                            "inputPath": "http://registry\\.gpii\\.net/common/language"
+                        }
+                    }
+                }
+            },
+        },
+        "configure": [
+            "settings.configure",
+        ],
+        "restore": [
+            "settings.configure",
+        ],
+        "start": [ ],
+        "stop": [ ],
+        "isInstalled": [
+            {
+                "type": "gpii.deviceReporter.alwaysInstalled"
+            }
+        ]
+    },
+    "com.apple.macos.volumeControl": {
+        "name": "macOS system volume",
+        "contexts": {
+            "OS": [
+                {
+                    "id": "darwin"
+                }
+            ]
+        },
+        "settingsHandlers": {
+            "configure": {
+                "type": "gpii.macos.nativeSettingsHandler",
+                "liveness": "live",
+                "options": {
+                    "functionName": "Volume"
+                },
+                "supportedSettings": {
+                    "Volume": {
+                        "schema": {
+                            "title": "System volume",
+                            "description": "Changes the current system volume.",
+                            "type": "number",
+                            "default": 0.5,
+                            "minimum": 0,
+                            "maximum": 1,
+                            "multipleOf": 0.01
+                        }
+                    }
+                },
+                "capabilitiesTransformations": {
+                    "Volume": {
+                        "transform": {
+                            "type": "fluid.transforms.value",
+                            "inputPath": "http://registry\\.gpii\\.net/common/volume",
+                            "outputPath": "value"
+                        }
+                    }
+                },
+                "inverseCapabilitiesTransformations": {
+                    "http://registry\\.gpii\\.net/common/volume": "Volume.value"
+                }
+            }
+        },
+        "start": [],
+        "stop": [],
+        "isInstalled": [
+            {
+                "type": "gpii.deviceReporter.alwaysInstalled"
+            }
+        ],
+        "isRunning": []
+    },
     "fakemag1": {
         "name": "Fake Magnifier 1",
         "contexts": {
@@ -20,16 +112,6 @@
                 },
                 "capabilitiesTransformations": {
                     "magnification": "http://registry\\.gpii\\.net/common/magnification"
-                },
-                "supportedSettings": {
-                    "magnification": {
-                        schema: {
-                            title: "Magnification Level",
-                            description: "How many times to magnify content when magnification is enabled.",
-                            type: "number",
-                            default: 1.10
-                        }
-                    }
                 }
             }
         },
@@ -70,23 +152,6 @@
                 "capabilitiesTransformations": {
                     "magnification": "http://registry\\.gpii\\.net/common/magnification",
                     "invert": "http://registry\\.gpii\\.net/common/invertColours"
-                },
-                "supportedSettings": {
-                    "magnification": {
-                        "schema": {
-                            "title": "Magnification Level",
-                            "description": "How many times to magnify content when magnification is enabled.",
-                            "type": "number",
-                            "default": 1.10
-                        }
-                    },
-                    "invert": {
-                        "schema": {
-                            "title": "Invert Colours",
-                            "description": "Enable colour inversion for Magnifier",
-                            "type": "boolean"
-                        }
-                    }
                 }
             }
         },
@@ -128,30 +193,6 @@
                     "pitch": "http://registry\\.gpii\\.net/common/pitch",
                     "volumeTTS": "http://registry\\.gpii\\.net/common/volumeTTS",
                     "rate": "http://registry\\.gpii\\.net/common/speechRate"
-                },
-                "supportedSettings": {
-                    "pitch": {
-                        "schema": {
-                            "title": "Speech Pitch",
-                            "description": "The pitch at which text is announced.",
-                            "minimum": 0,
-                            "maximum": 20
-                        }
-                    },
-                    "volumeTTS": {
-                        "schema": {
-                            "title": "Volume TTS",
-                            "description": "Volume TTS",
-                            "type": "integer"
-                        }
-                    },
-                    "rate": {
-                        "schema": {
-                            "title": "Rate",
-                            "description": "Speech rate for all announcements (scale varies by voice).",
-                            "type": "integer"
-                        }
-                    }
                 }
             }
         },
