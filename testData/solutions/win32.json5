@@ -128,6 +128,80 @@
             }
         ]
     },
+    "com.microsoft.windows.screenDPI": {
+        "name": "Windows DPI",
+        "contexts": {
+            "OS": [
+                {
+                    "id": "win32",
+                    "version": ">=6.2"
+                }
+            ]
+        },
+        "settingsHandlers": {
+            "configure": {
+                "type": "gpii.windows.displaySettingsHandler",
+                "liveness": "live",
+                "supportedSettings": {
+                    "screen-dpi": {
+                        "schema": {
+                            "title": "Screen DPI",
+                            "description": "Screen DPI of the default display.",
+                            "type": "number",
+                            "minimum": 1,
+                            "maximum": 5
+                            // Taken from dpiWindows10.js, may not be appropriate
+                        }
+                    }
+                },
+                "capabilitiesTransformations": {
+                    "screen-dpi": "http://registry\\.gpii\\.net/common/DPIScale"
+                }
+            }
+        },
+        "isInstalled": [
+            {
+                "type": "gpii.deviceReporter.alwaysInstalled"
+            }
+        ]
+    },
+    "com.microsoft.windows.screenResolution": {
+        "name": "Windows Screen Resolution",
+        "contexts": {
+            "OS": [
+                {
+                    "id": "win32",
+                    "version": ">=5.0"
+                }
+            ]
+        },
+        "settingsHandlers": {
+            "configuration": {
+                "type": "gpii.windows.displaySettingsHandler",
+                "liveness": "liveRestart",
+                "supportedSettings": {
+                    "screen-resolution": {
+                        "schema": {
+                            "title": "Screen resolution",
+                            "description": "Screen resolution of the default display.",
+                            "type": "array"
+                            // TODO: Discuss and fix this.
+                            // TODO: Not sure about this type
+                            // TODO: This must be filled in on the fly with available screen resolutions
+                            //"items": {
+                            //    "enum": []
+                            //}
+                        }
+                    }
+                }
+            }
+        },
+        "isInstalled": [
+            {
+                "type": "gpii.deviceReporter.alwaysInstalled"
+            }
+        ]
+    },
     "com.microsoft.windows.volumeControl": {
         "name": "Windows 10 system volume",
         "contexts": {
